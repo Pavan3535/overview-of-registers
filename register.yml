@@ -1,0 +1,29 @@
+---
+- name: test register playbook 
+  hosts: controller 
+  ignore_errors: yes
+  tasks: 
+
+
+    - name: system package install 
+      yum: 
+        name: ex249
+        state: latest 
+      register: x 
+
+    - name: install httpd package 
+      yum: 
+        name: httpd 
+        state: latest
+      when: x.rc == 1 
+
+    - name: start service
+      service: 
+        name: httpd
+        state: started 
+        enabled: true
+      when: x.rc == 1
+
+    - name: print the register 
+      debug:
+        var: x
